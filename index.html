@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudentHub | Student Database</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">S</div>
+        <div>
+          <div class="brand-name">StudentHub</div>
+          <div class="brand-sub">Campus database</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button class="nav-item active" data-view="dashboard"><span>⌂</span> Dashboard</button>
+        <button class="nav-item" data-view="students"><span>♙</span> Students</button>
+        <button class="nav-item" data-view="add"><span>＋</span> Add Student</button>
+        <button class="nav-item" data-view="chat"><span>✦</span> AI Assistant</button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="api-status">
+          <span class="status-dot"></span>
+          <div>
+            <strong>Backend online</strong>
+            <small>FastAPI connected</small>
+          </div>
+        </div>
+        <a class="docs-link" href="/docs" target="_blank">Open API Docs ↗</a>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">STUDENT DATABASE</div>
+          <h1 id="pageTitle">Good day 👋</h1>
+        </div>
+        <button class="primary-btn" id="quickAdd">＋ Add student</button>
+      </header>
+
+      <section id="dashboardView" class="view">
+        <div class="hero">
+          <div>
+            <p class="hero-kicker">COLLEGE MANAGEMENT</p>
+            <h2>Keep your student records<br><em>simple & organised.</em></h2>
+            <p class="hero-copy">Manage student information, find records quickly and ask the AI assistant questions about your database.</p>
+            <button class="dark-btn" id="heroStudents">View students →</button>
+          </div>
+          <div class="hero-note">
+            <div class="note-icon">✦</div>
+            <strong>Built for everyday campus use</strong>
+            <span>FastAPI · SQLite · LangGraph · Gemini</span>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div class="stat-card">
+            <span>Total students</span>
+            <strong id="totalStudents">—</strong>
+            <small>records in database</small>
+          </div>
+          <div class="stat-card">
+            <span>Branches</span>
+            <strong id="branchCount">—</strong>
+            <small>different study branches</small>
+          </div>
+          <div class="stat-card">
+            <span>Academic years</span>
+            <strong id="yearCount">—</strong>
+            <small>years represented</small>
+          </div>
+        </div>
+
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">RECENT RECORDS</div>
+            <h3>Students</h3>
+          </div>
+          <button class="text-btn" id="allStudents">View all →</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>College</th><th>Branch</th><th>Year</th><th>Skills</th></tr></thead>
+            <tbody id="recentTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="studentsView" class="view hidden">
+        <div class="section-head page-section-head">
+          <div><div class="eyebrow">RECORDS</div><h3>All students</h3></div>
+          <div class="search-box">⌕ <input id="searchInput" placeholder="Search name, branch, skill..." /></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>Email</th><th>College</th><th>Branch</th><th>Year</th><th>Actions</th></tr></thead>
+            <tbody id="studentsTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="addView" class="view hidden">
+        <div class="form-card">
+          <div class="eyebrow">NEW RECORD</div>
+          <h3>Add a student</h3>
+          <p class="muted">Enter the basic details below. The record will be saved directly to the FastAPI database.</p>
+          <form id="studentForm">
+            <div class="form-grid">
+              <label>Full name<input name="name" required placeholder="e.g. Priya Patil"></label>
+              <label>Email<input name="email" type="email" required placeholder="priya@example.com"></label>
+              <label>Phone<input name="phone" placeholder="+91 98765 43210"></label>
+              <label>College<input name="college" required placeholder="Your college name"></label>
+              <label>Branch<input name="branch" required placeholder="AI & Data Science"></label>
+              <label>Year<input name="year" type="number" min="1" max="6" required placeholder="3"></label>
+              <label class="full">Skills<input name="skills" placeholder="Python, SQL, Machine Learning"></label>
+            </div>
+            <div class="form-actions"><button type="button" class="ghost-btn" id="cancelForm">Cancel</button><button class="primary-btn" type="submit">Save student</button></div>
+          </form>
+          <div id="formMessage" class="message"></div>
+        </div>
+      </section>
+
+      <section id="chatView" class="view hidden">
+        <div class="chat-layout">
+          <div class="chat-intro">
+            <div class="eyebrow">AI ASSISTANT</div>
+            <h3>Ask about your<br>student database.</h3>
+            <p>The assistant retrieves relevant student records and uses the configured Gemini model to form a natural-language answer.</p>
+            <div class="example-prompts">
+              <button>How many students are in the database?</button>
+              <button>Show students who know Python</button>
+              <button>Which students are in AI & Data Science?</button>
+            </div>
+          </div>
+          <div class="chat-card">
+            <div id="chatMessages" class="chat-messages">
+              <div class="chat-bubble assistant">Hi! Ask me something about the student records. ✦</div>
+            </div>
+            <form id="chatForm" class="chat-input">
+              <input id="chatInput" required placeholder="Ask a question..." />
+              <button>Send</button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="/script.js"></script>
+</body>
+</html>
